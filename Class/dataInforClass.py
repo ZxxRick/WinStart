@@ -1,31 +1,36 @@
-'''
-        {“节点号”：xx,“节点位置”：[x,y],"节点名字"：xx,节点按钮组：[x,x,x,]}*N
-
-        按钮组里面又有{}
-
-    '''
+"""
+    用于和userData文件交互的类
+"""
 
 
-class ButtonInfor():
-    '''
-    parent, name, row, col,allPath,wid=0,hei=0
-    '''
+class ButtonInfor:
+    def __init__(self, buttonName=None, buttonType=None, buttonRunPath=None, buttonX=None, buttonY=None, buttonW=None,
+                 buttonH=None):
+        self.buttonName = buttonName
+        self.buttonType = buttonType
+        self.buttonRunPath = buttonRunPath
+        self.buttonX = buttonX
+        self.buttonY = buttonY
+        self.buttonW = buttonW
+        self.buttonH = buttonH
+
+
+class GroupInfor:
+    def __init__(self, groupNum=None):
+        self.groupNum = groupNum
+        self.buttons = []
+
+
+class ListInfor:
+    def __init__(self, colNum=None):
+        self.colNum = colNum
+        self.groups = []
+
+
+class OSInfor:
     def __init__(self):
-        self.buttonparentID=None
-        self.buttonname=None
-        self.buttonrow=None
-        self.buttoncol=None
-        self.buttonallPath=None
-        self.buttonwidth=None
-        self.buttonheight=None
-
-    def getInforDict(self):
-
-        pass
-
-class GroupInfor():
-    def __init__(self):
-        self.GroupID = None
-        self.GroupName = None
-        self.GroupLocal = [0, 0]
-        self.GroupButtons = []
+        self.screenWidth = None
+        self.screenHeight = None
+        self.shouldListCount = None
+        self.hasListCount = None
+        self.listS = []

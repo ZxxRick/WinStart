@@ -9,6 +9,5 @@ import win32gui
 if __name__ == '__main__':
     pass
     pp=r"E:\Tools\iconChange\iconChange.exe"
-    # get=GetLink(pp)
-    # get.saveIcon()
     qq=DataIO()
+    qq.readXML()

@@ -1,14 +1,8 @@
 
 from PyQt5.Qt import *
 
-from PyQt5 import QtCore
-
-from Class.zAllGroup import ZAllGroup
-from Class.zButton import ZButton
-from Class.zGroupBox import ZGroupBox
-from Class.zGroupList import ZGroupList
+from UIClass.zAllGroup import ZAllGroup
 from UI.TestDialog import Ui_Dialog
-from UI.TestQWidget import Ui_Form
 
 
 class TestDialog(QDialog, Ui_Dialog):

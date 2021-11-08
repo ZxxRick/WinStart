@@ -1,7 +1,7 @@
 from PyQt5.Qt import *
 # 用于存放几个ZGroupBox的容器
 from Class.debug import Debug
-from Class.zGroupBox import ZGroupBox
+from UIClass.zGroupBox import ZGroupBox
 
 
 class ZGroupList(QWidget):
@@ -12,22 +12,20 @@ class ZGroupList(QWidget):
         self.width = width
         self.__initUI()
         self.__initStyle()
-        self.__addGroup()
+        # self.__addGroup()
 
     def __initUI(self):
         self.layout = QVBoxLayout()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-    def __addGroup(self):
-        gr = ZGroupBox(self)
-        gr2 = ZGroupBox(self)
-        gr3 = ZGroupBox(self)
-        self.layout.addWidget(gr)
-        self.layout.addWidget(gr2)
-        self.layout.addWidget(gr3)
-
+    # 传入的是一个列表，其内元素为按钮组
+    def addGroup(self, groups):
+        for group in groups:
+            gr = ZGroupBox(self)
+            gr.addButton(group.buttons)
+            self.layout.addWidget(gr)
         self.setLayout(self.layout)
-        pass
+        self.debug.dLog("addGroup加载完毕", 7003)
 
     def __initStyle(self):
         # self.setStyleSheet("background-color:red;")

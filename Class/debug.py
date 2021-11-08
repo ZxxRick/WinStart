@@ -4,11 +4,12 @@ from datetime import datetime
 class Debug():
     def __init__(self, className=""):
         self.name = className
-        self.dieList = [5001, 2004, 2003]
+        self.dieList = [5001, 7003, 2004, 2003]
 
     def dLog(self, msg, logID=0, ):
         if logID in self.dieList:  # 屏蔽掉按钮的log
             return
+
 
         dt = datetime.now()
         print(self.name + " Log." + msg + " run msgID:" + str(logID), end="  ")

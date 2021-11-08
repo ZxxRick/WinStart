@@ -1,10 +1,9 @@
-from PyQt5.Qt import *
-
-from PyQt5.QtCore import pyqtSlot, Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget
 
+from Class.dataIO import DataIO
 from Class.debug import Debug
-from Class.zAllGroup import ZAllGroup
+from UIClass.zAllGroup import ZAllGroup
 from Thread.hotKey import HotKey
 from UI.mian import Ui_MainWindow
 
@@ -23,7 +22,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.close()
 
     def hide(self):  # 自己改写隐藏功能
-        super().hide()
+        # super().hide()
         self.isShowTag = False
 
     def show(self):
@@ -48,7 +47,7 @@ class Main(QMainWindow, Ui_MainWindow):
 
         # 在系统托盘处显示图标未写
 
-        # 加载控件
+        #
 
     # 运行HotKey线程后获取返回值的函数
     def __getHotKey(self, tag):
@@ -68,12 +67,17 @@ class Main(QMainWindow, Ui_MainWindow):
 
     # 窗体风格初始化
     def __initStyle(self):
-        self.setWindowOpacity(0.95)  # 设置窗口透明度
+        # self.setWindowOpacity(0.95)  # 设置窗口透明度
         self.setWindowFlags(Qt.FramelessWindowHint)  # 隐藏最小化按钮
         self.setWindowState(Qt.WindowMaximized)
         # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
 
+    # 加载控件
     def __addAllGroup(self):
-        ag = ZAllGroup(3, self)
+
+        dataIO = DataIO()
+        dataInfor = dataIO.readXML()
+        ag = ZAllGroup(self)
+        ag.addGroupList(dataInfor.listS, dataInfor.hasListCount, dataInfor.shouldListCount)
         self.scrollArea.setWidget(ag)
-        self.debug.dLog("__addAllGroup", 1002)
+        self.debug.dLog("__addAllGroup 完毕", 1002)
