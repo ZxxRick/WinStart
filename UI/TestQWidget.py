@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(750, 693)
+        Form.resize(525, 295)
         self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(280, 390, 72, 15))
+        self.label.setGeometry(QtCore.QRect(140, 90, 72, 15))
         self.label.setObjectName("label")
 
         self.retranslateUi(Form)

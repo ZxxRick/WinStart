@@ -1,9 +1,14 @@
+from Class.dataIO import DataIO
 from Class.getLink import GetLink
 from Thread.getInput import GetInput
 from Thread.hotKey import HotKey
 
+import win32ui
+import win32gui
+
 if __name__ == '__main__':
     pass
-    pp=r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Edge.exe"
-    get=GetLink(pp)
- 
+    pp=r"E:\Tools\iconChange\iconChange.exe"
+    # get=GetLink(pp)
+    # get.saveIcon()
+    qq=DataIO()

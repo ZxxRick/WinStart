@@ -14,18 +14,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(836, 749)
-        self.horizontalLayout = QtWidgets.QHBoxLayout(Dialog)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        Dialog.resize(1052, 528)
+        self.hboxlayout = QtWidgets.QHBoxLayout(Dialog)
+        self.hboxlayout.setObjectName("hboxlayout")
         self.widget = QtWidgets.QWidget(Dialog)
         self.widget.setObjectName("widget")
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setGeometry(QtCore.QRect(220, 0, 72, 15))
-        self.label.setObjectName("label")
-        self.pushButton = QtWidgets.QPushButton(self.widget)
-        self.pushButton.setGeometry(QtCore.QRect(300, 330, 93, 28))
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.widget)
+        self.hboxlayout.addWidget(self.widget)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -33,5 +27,3 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label.setText(_translate("Dialog", "TextLabel"))
-        self.pushButton.setText(_translate("Dialog", "PushButton"))

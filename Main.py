@@ -9,8 +9,8 @@ from UIClass.testDialog import TestDialog
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    # myapp = Main()
-    myapp=TestDialog()
+    myapp = Main()
+    # myapp=TestDialog()
     myapp.show()
 
     sys.exit(app.exec_())

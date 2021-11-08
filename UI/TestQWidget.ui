@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>693</height>
+    <width>525</width>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,37 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>390</y>
+     <x>140</x>
+     <y>90</y>
      <width>72</width>
      <height>15</height>
     </rect>
    </property>
    <property name="text">
     <string>QWidget</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>230</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>110</y>
+     <width>120</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>GroupBox</string>
    </property>
   </widget>
  </widget>
