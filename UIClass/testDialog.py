@@ -16,7 +16,6 @@ class DraggableButton(QPushButton):
         self.iniDragCor = [0, 0]
 
     def mousePressEvent(self, e):
-        print("ppp", e.pos())
         self.iniDragCor[0] = e.x()
         self.iniDragCor[1] = e.y()
 
