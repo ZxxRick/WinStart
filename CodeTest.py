@@ -12,7 +12,6 @@ import win32gui
 if __name__ == '__main__':
     pass
     pp = r"E:\Tools\iconChange\iconChange.exe"
+    bu = ButtonInfor("a", "exe", pp)
     dataIO = DataIO()
-    for i in range(5):
-        print(i)
-    # print(arr)
+    dataIO.addButtonInNewGroup(bu)

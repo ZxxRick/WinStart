@@ -42,14 +42,6 @@ class DataIO:
 
             self.debug.dWarning("userData文件保存错误", 3111)
 
-    # 输入的程序名字，绝对路径，类型（exe,lnk)
-    def writeXML(self, fileName, filePath, fileType):
-        data = [fileName, filePath, fileType]  # 需要写入的数据
-        with open(self.dataFile, 'a', newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(data)
-            self.debug.dLog(" 数据文件写入完成", 3002)
-
     def addList(self, colNum):
         """
             添加列表,用于新建按钮或者改动按钮位置导致的新建列表
@@ -73,17 +65,18 @@ class DataIO:
         # 添加数据需要使用doc.createTextNode函数
         hasListCount.appendChild(self.dom.createTextNode(str(newHasCount)))
 
+    # 代码有问题，删除后,按钮的排列需要改变
     def delButton(self, buttonPath):
         """
             根据传入的文件路径来删除按钮
         :param buttonPath:字符串类型
         :return:返回一个bool类型的，标志是否完成
 
-
-        注意：删除节点后未写界面刷新功能
-
         """
         lists = self.root.getElementsByTagName("list")
+
+        # 组被全部删除的tag
+        allDelTag = False
         for li in lists:
             groups = li.getElementsByTagName("group")
             for group in groups:
@@ -92,26 +85,23 @@ class DataIO:
                     delpath = button.getElementsByTagName("buttonRunPath")[0].firstChild.data
                     if delpath == buttonPath:
                         try:
-                            # 全部删除的tag
-                            allDelTag = False
                             # 如果删除的是该组内最后一个磁贴，则删除这个组
                             if len(buttons) == 1:
+                                groupNum = int(group.getAttribute("groupNum"))
                                 group.parentNode.removeChild(group)
-                                allDelTag = True
+                                self.__saveData()
+                                self.__flashList(li, groupNum)
                             else:
                                 button.parentNode.removeChild(button)
-
-                            self.__saveData()
-                            # #如果不删除组
-                            # if not allDelTag:
-                            #     groupNum=group.getElementsByTagName("groupNum")[0].firstChild.data
-                            #     groupInfor=self.readGroup(groupNum)
+                                self.__saveData()
+                                self.__flashButton(group)
 
                             self.debug.dLog("删除按钮执行成功")
                         except:
                             self.debug.dWarning("删除按钮执行失败")
                         return True
 
+    # 代码有严重BUG，会干扰其他组的按钮
     def addButtonInNewGroup(self, button):
         """
             用户通过一定的方法来添加磁贴
@@ -131,8 +121,7 @@ class DataIO:
             # 获取最大的组
             newGroup = None
             maxNum = 11  # 最大的组个数
-            buX = ""  # 新按钮的位置
-            buY = ""
+
             for gr in groups:
                 num = int(gr.getAttribute("groupNum"))
                 # 获取最大的组号
@@ -151,13 +140,10 @@ class DataIO:
                 buY = "0"
 
             else:
-                return 1
                 # 如果不新建组，需要计算新按钮在组中的位置
                 buX, buY = self.__getNewButtonXY(newGroup)
-                '''
-                    如果不新建组，需要计算新的按钮高度
-                '''
-            newButton = self.__fillButton(button, buX, buY)
+
+            newButton = self.__fillDomButton(button, buX, buY)
             newGroup.appendChild(newButton)
 
             self.__saveData()
@@ -184,12 +170,15 @@ class DataIO:
                     self.debug.dLog("查找到组")
                     try:
                         buX, buY = self.__getNewButtonXY(group)
-                        newButton = self.__fillButton(button, buX, buY)
+                        newButton = self.__fillDomButton(button, buX, buY)
                         group.appendChild(newButton)
                         self.__saveData()
                         self.debug.dLog("向" + groupNum + "中添加磁贴成功")
                     except:
                         self.debug.dWarning("向" + groupNum + "中添加磁贴失败")
+                        return 1
+        # 返回1表示添加成功
+        return 0
 
     def alterGroupName(self, groupNum, newGroupName):
         """
@@ -204,12 +193,12 @@ class DataIO:
                     if gr.getAttribute("groupNum") == groupNum:
                         gr.setAttribute('groupName', newGroupName)
                         self.__saveData()
-                        self.debug.dLog("groupNum 修改完毕", 3004)
+                        self.debug.dLog("groupName 修改完毕", 3004)
                         return
         except:
             self.debug.dWarning("groupNum 修改错误", 3014)
 
-    def readXML(self):
+    def getXML(self):
         """
             将整个数据树返回，其返回值是一个OSInfor()类的对象，其中包括所有的数据
             :return: OSInfor()
@@ -231,29 +220,22 @@ class DataIO:
                     buttons = group.getElementsByTagName('button')
                     groupInfor = GroupInfor(group.getAttribute("groupNum"), group.getAttribute("groupName"))
                     for button in buttons:
-                        buttonInfor = ButtonInfor(
-                            button.getElementsByTagName('buttonName')[0].firstChild.data,
-                            button.getElementsByTagName('buttonType')[0].firstChild.data,
-                            button.getElementsByTagName('buttonRunPath')[0].firstChild.data,
-                            int(button.getElementsByTagName('buttonX')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonY')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonW')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonH')[0].firstChild.data))
+                        buttonInfor = self.__readDomButton(button)
                         groupInfor.buttons.append(buttonInfor)
                     listInfor.groups.append(groupInfor)
                 osInfor.listS.append(listInfor)
 
         except:
             self.debug.dWarning("xml文件读取错误", 3011)
-        self.debug.dLog("readXML over", 3001)
+        self.debug.dLog("getXML over", 3001)
 
         return osInfor
 
-    def readGroup(self, groupNum):
+    def getGroup(self, groupNum):
         """
-        通过组号查找组内容，返回的是一个GroupInfor()类型的数据
-        :param groupNum:
-        :return:
+            通过组号查找组内容，返回的是一个GroupInfor()类型的数据
+            :param groupNum:
+            :return:
         """
         groupInfor = GroupInfor(groupNum)
 
@@ -265,18 +247,13 @@ class DataIO:
                     groupInfor.groupName = gr.getAttribute("groupName")
                     buttons = gr.getElementsByTagName("button")
                     for button in buttons:
-                        buttonInfor = ButtonInfor(
-                            button.getElementsByTagName('buttonName')[0].firstChild.data,
-                            button.getElementsByTagName('buttonType')[0].firstChild.data,
-                            button.getElementsByTagName('buttonRunPath')[0].firstChild.data,
-                            int(button.getElementsByTagName('buttonX')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonY')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonW')[0].firstChild.data),
-                            int(button.getElementsByTagName('buttonH')[0].firstChild.data))
+                        buttonInfor = self.__readDomButton(button)
                         groupInfor.buttons.append(buttonInfor)
                     return groupInfor
 
         return groupInfor
+
+    # #############################################类的私有方法（下边####################################
 
     def __isRepeatingButton(self, buttonPath):
         """
@@ -284,7 +261,7 @@ class DataIO:
             :param buttonPath: 新建的按钮程序路径
             :return: 返回bool值,True表示有重复的
         """
-        data = self.readXML()
+        data = self.getXML()
         lists = data.listS
         for li in lists:
             groups = li.groups
@@ -298,34 +275,89 @@ class DataIO:
     def __getNewButtonXY(self, group):
         """
             传入一个xml的节点，根节点是group，然后读取其中的按钮排列，最后给出新按钮需要放置的位置
-        :param group: 一个xml节点
-        :return: 返回X,Y（返回前需要将其转为str类型
+            :param group: 一个xml节点
+            :return: 返回i,j（返回前需要将其转为str类型
         """
-        buX = 0
-        buY = 0
-        # arr=list()
-        # arr = [[0, 0, 0, 0, 0, 0]] * 200
-        # 六列两百行的数组
-        arr = [([0] * 6) for _ in range(200)]
+
         buttons = group.getElementsByTagName("button")
-        for button in buttons:
-            """遍历所有按钮"""
-
-            x = int(button.getElementsByTagName('buttonX')[0].firstChild.data)
-            y = int(button.getElementsByTagName('buttonY')[0].firstChild.data)
-            w = int(button.getElementsByTagName('buttonW')[0].firstChild.data)
-            h = int(button.getElementsByTagName('buttonH')[0].firstChild.data)
-
-            for i in range(w):
-                for j in range(h):
-                    arr[x + j][y + i] = 1
+        arr = self.__getButtonArr(buttons)
 
         for i in range(1, 198, 1):
             for j in range(0, 5, 1):
                 if arr[i][j] == arr[i + 1][j] == arr[i][j + 1] == arr[i + 1][j + 1] == 0:
                     return str(i), str(j)
 
-    def __fillButton(self, button, buX, buY):
+    def __flashList(self, li, minNum):
+        """
+        由于删除按钮，导致整个组为空，所以这个组被删除，需要刷新其他组的组号，
+        :param li: 需要刷新的组（dom节点），其中有多个组（也可能没组
+        :param minNum :比这个大的组号都需要改
+        """
+        groups = li.getElementsByTagName("group")
+        for group in groups:
+            groupNum = int(group.getAttribute("groupNum"))
+            if groupNum > minNum:
+                groupNum -= 1
+                group.setAttribute('groupNum', str(groupNum))
+        self.__saveData()
+
+    # 需要优化
+    def __flashButton(self, group):
+        """
+        当删除按钮后需要检测该组的排列，是否有空缺
+        :param group: dom类型的节点
+        """
+        # 六列两百行的数组
+        buttons = group.getElementsByTagName("button")
+        arr = self.__getButtonArr(buttons)
+
+        # 这里采用一个很笨的办法 ,获取空行和空行的高度
+        emptyH = 0
+        row = 0
+        tagIsFrist = True
+        brr = []
+        for i in range(1, 200, 1):
+            for j in range(0, 6, 1):
+                if arr[i][j] == 1:
+                    break
+                if arr[i][j] == 0 and j == 5:
+                    if tagIsFrist:
+                        tagIsFrist = False
+                        row = i
+                        brr.append(i)
+                        emptyH += 1
+                    else:
+                        if i - 1 in brr:
+                            brr.append(i)
+                            emptyH += 1
+
+        for button in buttons:
+            x, y, w, h = self.__getButtonXYWH(button)
+            if x > row:
+                button.getElementsByTagName('buttonX')[0].firstChild.data = str(x - emptyH)
+        self.__saveData()
+
+    # #############################################类的私有方法（上边####################################
+
+    # ###############################################代码复用（下边#####################################
+    def __getButtonArr(self, buttons):
+        """
+        代码复用，通过group （dom节点）来填充一个200*6的数组,表示按钮的位置
+        :param buttons:
+        :return:
+        """
+        # 六列两百行的数组
+        arr = [([0] * 6) for _ in range(200)]
+        # buttons = group.getElementsByTagName("button")
+        for button in buttons:
+            """遍历所有按钮"""
+            x, y, w, h = self.__getButtonXYWH(button)
+            for i in range(w):
+                for j in range(h):
+                    arr[x + j][y + i] = 1
+        return arr
+
+    def __fillDomButton(self, button, buX, buY):
         """
         用于创建按钮节点，代码复用
         :param button:参数是一个ButtonInfor()类型的对象
@@ -364,3 +396,34 @@ class DataIO:
         buttonY.appendChild(self.dom.createTextNode(buY))
 
         return newButton
+
+    def __getButtonXYWH(self, button):
+        """
+        代码复用，获取dom节点（按钮的节点）的x,y,w,h
+        :param button:
+        :return:返回的是int类型
+        """
+        x = int(button.getElementsByTagName('buttonX')[0].firstChild.data)
+        y = int(button.getElementsByTagName('buttonY')[0].firstChild.data)
+        w = int(button.getElementsByTagName('buttonW')[0].firstChild.data)
+        h = int(button.getElementsByTagName('buttonH')[0].firstChild.data)
+        return x, y, w, h
+
+    def __readDomButton(self, button):
+        """
+        传入一个dom类型的button节点，返回ButtonInfor类型的数据，代码复用
+        :param button:
+        :return: ButtonInfor
+        """
+        buttonInfor = ButtonInfor(
+            button.getElementsByTagName('buttonName')[0].firstChild.data,
+            button.getElementsByTagName('buttonType')[0].firstChild.data,
+            button.getElementsByTagName('buttonRunPath')[0].firstChild.data,
+            int(button.getElementsByTagName('buttonX')[0].firstChild.data),
+            int(button.getElementsByTagName('buttonY')[0].firstChild.data),
+            int(button.getElementsByTagName('buttonW')[0].firstChild.data),
+            int(button.getElementsByTagName('buttonH')[0].firstChild.data))
+        # self.debug.dLog(button.getElementsByTagName('buttonName')[0].firstChild.data)
+        return buttonInfor
+
+    # ###############################################代码复用（上边#####################################

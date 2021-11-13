@@ -21,11 +21,6 @@ class GetLink:
             self.fileExt = ".lnk"
         # self.__saveLinkData()
 
-    # # 保存数据
-    # def __saveLinkData(self):
-    #     dataSave = DataIO()
-    #     dataSave.write(self.fileName, self.filePathAndName, self.fileExt)
-    #     self.__saveIcon()
 
     # 保存图标
     def __saveIcon(self):
@@ -33,7 +28,7 @@ class GetLink:
         # win32gui.DestroyIcon(small[0])
         # self.pixmap = QtGui.QPixmap.fromWinHBITMAP(self.bitmapFromHIcon(large[0]), 2)
         # self.pixmap = PyQt5.QtWinExtras.QtWin.fromHICON(large[0])
-        # print((large[0]))
+
         self.debug.dLog("图标保存功能未完成", 4001)
 
         # self.pixmap.save("a.ico", "ico")

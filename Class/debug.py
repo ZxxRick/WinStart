@@ -10,7 +10,6 @@ class Debug():
         if logID in self.dieList:  # 屏蔽掉按钮的log
             return
 
-
         dt = datetime.now()
         print(self.name + " Log." + msg + " run msgID:" + str(logID), end="  ")
         print(f'运行时间：{dt.hour}:{dt.minute}:{dt.second}')

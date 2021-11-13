@@ -51,7 +51,6 @@ class Main(QMainWindow, Ui_MainWindow):
 
     # 运行HotKey线程后获取返回值的函数
     def __getHotKey(self, tag):
-        # print("Log.run __getHotKey()")
         if tag == 0:
             if self.isShowTag:
                 self.hide()
@@ -63,7 +62,6 @@ class Main(QMainWindow, Ui_MainWindow):
             self.hotKey = HotKey()
             self.hotKey.HotKeySignal.connect(self.__getHotKey)
             self.hotKey.start()
-        print("Log.over __getHotKey()")
 
     # 窗体风格初始化
     def __initStyle(self):
@@ -76,7 +74,8 @@ class Main(QMainWindow, Ui_MainWindow):
     def __addAllGroup(self):
 
         dataIO = DataIO()
-        dataInfor = dataIO.readXML()
+        dataInfor = dataIO.getXML()
+
         ag = ZAllGroup(self)
         ag.addGroupList(dataInfor.listS, dataInfor.hasListCount, dataInfor.shouldListCount)
         self.scrollArea.setWidget(ag)

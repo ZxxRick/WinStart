@@ -19,7 +19,7 @@ class ZButton(QPushButton):
     def __init__(self, parent, buttonName, buttonType, buttonRunPath, buttonX, buttonY, buttonW, buttonH):
         super().__init__()
         self.debug = Debug("ZButton")
-        self.buttonParent = parent  # 父控件
+        self.parent = parent  # 父控件
         self.buttonName = buttonName
         self.buttonRunPath = buttonRunPath  # 需要加载的程序,完全文件路径
         self.buttonType = buttonType
@@ -41,20 +41,24 @@ class ZButton(QPushButton):
             except:
                 self.debug.dWarning("磁贴程序未启动", 2011)
 
-        # if event.button() == Qt.RightButton:
-        #     self.debug.dLog("自定义按钮右键被按下", 2002)
-
     # 右键菜单
     def contextMenuEvent(self, event):
         menu = QMenu(self)
         delButtonAction = menu.addAction("取消固定")
+        renameButtonAction = menu.addAction("重命名")
         action = menu.exec_(self.mapToGlobal(event.pos()))
         if action == delButtonAction:
             dataIO = DataIO()
             try:
                 dataIO.delButton(self.buttonRunPath)
+                self.parent.selfFlash()
             except:
                 self.debug.dWarning("执行取消固定失败")
+        elif action == renameButtonAction:
+            try:
+                pass
+            except:
+                self.debug.dWarning("我还没写呢、、、、")
 
     # 事件过滤器，在控件尺寸发生改变时，计算其高度
     def eventFilter(self, element, event):

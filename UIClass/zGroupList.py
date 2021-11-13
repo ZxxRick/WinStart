@@ -20,9 +20,14 @@ class ZGroupList(QWidget):
 
     # 传入的是一个列表，其内元素为按钮组
     def addGroup(self, groups):
+        """
+
+        :param groups: groupInfor类型的数据
+        :return:
+        """
         for group in groups:
             gr = ZGroupBox(self, group.groupNum, group.groupName)
-            gr.addButton(group.buttons)
+
             self.layout.addWidget(gr)
         self.setLayout(self.layout)
         self.debug.dLog("addGroup加载完毕", 7003)
