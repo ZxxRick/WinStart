@@ -12,16 +12,16 @@ class ZGroupList(QWidget):
         self.width = width
         self.__initUI()
         self.__initStyle()
-        # self.__addGroup()
 
     def __initUI(self):
         self.layout = QVBoxLayout()
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.debug.dLog("ZGroupList风格初始化完成", 7003)
 
     # 传入的是一个列表，其内元素为按钮组
     def addGroup(self, groups):
         for group in groups:
-            gr = ZGroupBox(self)
+            gr = ZGroupBox(self, group.groupNum, group.groupName)
             gr.addButton(group.buttons)
             self.layout.addWidget(gr)
         self.setLayout(self.layout)
@@ -29,4 +29,4 @@ class ZGroupList(QWidget):
 
     def __initStyle(self):
         # self.setStyleSheet("background-color:red;")
-        self.debug.dLog("ZGroupList风格初始化完成", 7003)
+        pass

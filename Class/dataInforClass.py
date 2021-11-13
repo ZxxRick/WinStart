@@ -16,8 +16,9 @@ class ButtonInfor:
 
 
 class GroupInfor:
-    def __init__(self, groupNum=None):
-        self.groupNum = groupNum
+    def __init__(self, groupNum, groupName=None):
+        self.groupNum = groupNum  # 两位数
+        self.groupName = groupName
         self.buttons = []
 
 

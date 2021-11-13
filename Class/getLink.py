@@ -19,13 +19,13 @@ class GetLink:
         self.fileName, self.fileExt = os.path.splitext(self.fileNameAndExt)
         if self.fileExt == "":
             self.fileExt = ".lnk"
-        self.__saveLinkData()
+        # self.__saveLinkData()
 
-    # 保存数据
-    def __saveLinkData(self):
-        dataSave = DataIO()
-        dataSave.write(self.fileName, self.filePathAndName, self.fileExt)
-        self.__saveIcon()
+    # # 保存数据
+    # def __saveLinkData(self):
+    #     dataSave = DataIO()
+    #     dataSave.write(self.fileName, self.filePathAndName, self.fileExt)
+    #     self.__saveIcon()
 
     # 保存图标
     def __saveIcon(self):

@@ -1,5 +1,6 @@
 from PyQt5.Qt import *
 
+from Class.debug import Debug
 from UIClass.zGroupList import ZGroupList
 
 '''
@@ -11,6 +12,7 @@ class ZAllGroup(QWidget):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
+        self.debug = Debug("ZAllGroup")
         self.__initUI()
 
     def __initUI(self):
@@ -20,11 +22,10 @@ class ZAllGroup(QWidget):
         self.setLayout(self.layout)
 
     # 进行数据填充
-    def addGroupList(self, lists, hasListCount, shouldListCount):
+    def addGroupList(self, lists, hasListCount=None, shouldListCount=None):
         for li in lists:
             gl = ZGroupList(self)
             gl.addGroup(li.groups)
             self.layout.addWidget(gl)
-        for i in range(int(shouldListCount)-int(hasListCount)):
-            self.layout.addStretch()  # 占位符
+            self.debug.dWarning("添加顺序需要优化")
         self.setLayout(self.layout)

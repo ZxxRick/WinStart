@@ -1,5 +1,11 @@
 import os
 from PyQt5.Qt import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from qtpy import QtGui
+
+from Class.dataIO import DataIO
 from Class.debug import Debug
 
 
@@ -17,7 +23,6 @@ class ZButton(QPushButton):
         self.buttonName = buttonName
         self.buttonRunPath = buttonRunPath  # 需要加载的程序,完全文件路径
         self.buttonType = buttonType
-        print(buttonName + "-" + buttonRunPath + "-" + buttonType)
         self.buttonX = buttonX  # 控件在父控件中的行列,及尺寸
         self.buttonY = buttonY
         self.buttonW = buttonW
@@ -30,10 +35,26 @@ class ZButton(QPushButton):
         super().mousePressEvent(event)
         if event.button() == Qt.LeftButton:
             self.debug.dLog("自定义按钮左键被按下", 2001)
-            os.startfile(self.buttonRunPath)
+            # 这里必须用try，不然用户点击后未启动会导致程序错误
+            try:
+                os.startfile(self.buttonRunPath)
+            except:
+                self.debug.dWarning("磁贴程序未启动", 2011)
 
-        if event.button() == Qt.RightButton:
-            self.debug.dLog("自定义按钮右键被按下", 2002)
+        # if event.button() == Qt.RightButton:
+        #     self.debug.dLog("自定义按钮右键被按下", 2002)
+
+    # 右键菜单
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        delButtonAction = menu.addAction("取消固定")
+        action = menu.exec_(self.mapToGlobal(event.pos()))
+        if action == delButtonAction:
+            dataIO = DataIO()
+            try:
+                dataIO.delButton(self.buttonRunPath)
+            except:
+                self.debug.dWarning("执行取消固定失败")
 
     # 事件过滤器，在控件尺寸发生改变时，计算其高度
     def eventFilter(self, element, event):
@@ -44,7 +65,6 @@ class ZButton(QPushButton):
     # 初始化按钮的信息
     def __initUI(self):
         self.installEventFilter(self)
-        # self.installEventFilter(self)
 
         self.setText(self.buttonName)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)  # 第二个参数的确是高度
@@ -52,13 +72,17 @@ class ZButton(QPushButton):
 
     def __initStyle(self):
 
+        """
+
+                                # border-radius:5px;
+                                # border:none; #去除边框
+        """
         self.setStyleSheet('''
-                            QPushButton
+                            ZButton
                             { 
-                                background:transparent;border-radius:5px;
-                                border:none; #去除边框
+                                background:transparent;
+                                border:1; #无效初始化
                             }
-                            QPushButton#pushButton:hover{background:transparent;}#将按钮设置为透明
                             '''
                            )
         self.debug.dLog("按钮风格初始化完成", 2003)
